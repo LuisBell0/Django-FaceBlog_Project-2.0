@@ -4,10 +4,12 @@ from rest_framework import routers
 from posts import views
 
 router = routers.DefaultRouter()
-router.register(r'user/posts', views.PostViewSet)
+router.register(prefix=r'post', viewset=views.PostViewSet, basename="posts")
+router.register(prefix=r'post-likes', viewset=views.LikePostViewSet, basename="post-likes")
+router.register(prefix=r'post-comments', viewset=views.CommentViewSet, basename="post-comments")
 
 urlpatterns = [
-    path('posts/', views.UserFollowingPostsListAPIView.as_view(), name='user_following_posts'),
+
 ]
 
 urlpatterns += router.urls

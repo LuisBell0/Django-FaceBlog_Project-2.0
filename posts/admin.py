@@ -11,7 +11,7 @@ class LikePostAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'post', 'posted_date')
+    list_display = ('id', 'user', 'post', 'text', 'posted_date')
 
 
 class LikeCommentAdmin(admin.ModelAdmin):
