@@ -1,7 +1,12 @@
-from django.urls import path
+from rest_framework import routers
 
-from posts import views
+from users import views
+
+router = routers.DefaultRouter()
+routes = router.register(prefix='profile', viewset=views.ProfileViewSet, basename='profile')
 
 urlpatterns = [
 
 ]
+
+urlpatterns += router.urls

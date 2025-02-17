@@ -1,7 +1,7 @@
 from rest_framework import permissions
 
 
-class IsOwnerOrReadOnly(permissions.BasePermission):
+class IsUserOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow owners of an object to edit or delete it.
     """
@@ -12,4 +12,4 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return True
 
         # Write permissions are only allowed to the owner of the post
-        return obj.owner == request.user
+        return obj.user == request.user

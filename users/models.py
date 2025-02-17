@@ -1,12 +1,14 @@
-from io import BytesIO
-from PIL import Image
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.core.files.base import ContentFile
+from django_faceblog.utils import compress_image
 
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
+
+
+def user_profile_picture_path(instance, filename):
+    return f'users/profile_pictures/{instance.user.username}/{filename}'
 
 
 class Profile(models.Model):
@@ -18,7 +20,7 @@ class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     follows = models.ManyToManyField('self',
                                      related_name='followed_by', symmetrical=False, blank=True)
-    profile_picture = models.ImageField(upload_to="users/profile_pictures/",
+    profile_picture = models.ImageField(upload_to=user_profile_picture_path,
                                         blank=True, null=True)
     bio = models.TextField(max_length=255, blank=True, null=True)
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES, blank=True, null=True)
@@ -29,16 +31,9 @@ class Profile(models.Model):
         return str(self.user)
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
         if self.profile_picture:
-            img = Image.open(self.profile_picture)
-            img_format = img.format
-
-            if img_format in ['JPEG', 'PNG', 'JPG']:
-                img = img.convert('RGB')
-                buffer = BytesIO()
-                img.save(buffer, format='JPEG' if img_format in ["JPEG", "JPG"] else "PNG", quality=70, optimize=True)
-                self.profile_picture.save(self.profile_picture.name, ContentFile(buffer.getvalue()), save=False)
+            self.profile_picture = compress_image(self.profile_picture)
+        super().save(*args, **kwargs)
 
     def get_followers_count(self):
         return self.followed_by.count() - 1

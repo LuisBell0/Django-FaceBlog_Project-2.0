@@ -4,10 +4,11 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from django_faceblog.permissions import IsUserOrReadOnly
 from posts.models import Comment, LikePost, Post, LikeComment
 from posts.serializers import CommentSerializer, LikePostSerializer, PostSerializer, LikeCommentSerializer
 from .mixins import FilterByPostMixin
-from .permissions import IsOwnerOrReadOnly, IsUserOrReadOnly
+from .permissions import IsOwnerOrReadOnly
 
 
 class PostViewSet(viewsets.ModelViewSet):

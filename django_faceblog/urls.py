@@ -8,7 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('silk/', include('silk.urls', namespace='silk')),
     path('api/v1/', include('djoser.urls')),
-    path('api/v1/', include('djoser.urls.authtoken')),
+    path('api/v1/', include('djoser.urls.jwt')),
     path('api/v1/', include('users.urls')),
     path('api/v1/', include('posts.urls')),
     path('api/v1/', include('notifications.urls')),
