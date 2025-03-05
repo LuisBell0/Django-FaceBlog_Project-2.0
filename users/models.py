@@ -4,7 +4,7 @@ from django_faceblog.utils import compress_image
 
 
 class CustomUser(AbstractUser):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, max_length=100)
 
 
 def user_profile_picture_path(instance, filename):

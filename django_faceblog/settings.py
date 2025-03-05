@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = "users.CustomUser"
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5174",
+    "http://localhost:5173",
 ]
 
 REST_FRAMEWORK = {

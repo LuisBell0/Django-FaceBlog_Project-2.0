@@ -9,7 +9,7 @@ class Post(models.Model):
     owner = models.ForeignKey(CustomUser,
                               on_delete=models.CASCADE,
                               related_name="posts")
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, max_length=255)
     likes_count = models.PositiveIntegerField(default=0)
     comments_count = models.PositiveIntegerField(default=0)
     posted_date = models.DateTimeField(auto_now_add=True)
