@@ -30,7 +30,6 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,7 +44,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'djoser',
     'silk',
+    'django_celery_beat',
 
+    'auth_system',
     'users',
     'posts',
     'notifications',
@@ -67,11 +68,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-SIMPLE_JWT = {
-    'REFRESH_TOKEN_LIFETIME': timedelta(hours=6),
-    'BLACKLIST_AFTER_ROTATION': True,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -161,3 +157,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Image handling
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+# JWT SETTINGS
+SIMPLE_JWT = {
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=6),
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+# CELERY SETTINGS
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

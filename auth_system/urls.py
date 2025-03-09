@@ -1,5 +1,5 @@
 from django.urls import path
-from auth import views
+from auth_system import views
 
 urlpatterns = [
     path('api/v1/token/create/', views.CustomTokenObtainPairView.as_view(), name='token-obtain-pair'),
