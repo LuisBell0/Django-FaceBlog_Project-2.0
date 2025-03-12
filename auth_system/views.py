@@ -20,7 +20,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 value=refresh_token,
                 httponly=True,
                 secure=True,
-                samesite='Lax'
+                samesite='None'
             )
             response.data.pop('access', None)
             response.data.pop('refresh', None)
@@ -40,13 +40,13 @@ class CustomTokenRefreshView(TokenRefreshView):
         return response
 
 
-def set_access_cookie(response, access_cookie):
+def set_access_cookie(response, access_token):
     response.set_cookie(
         key='access_token',
-        value=access_cookie,
+        value=access_token,
         httponly=True,
         secure=True,
-        samesite='Lax',
+        samesite='None',
         path='/',
     )
 
@@ -54,12 +54,20 @@ def set_access_cookie(response, access_cookie):
 @api_view(['POST'])
 def logout_view(request):
     refresh_token = request.COOKIES.get('refresh_token')
-
     if refresh_token:
         token = RefreshToken(refresh_token)
         token.blacklist()
 
     response = Response({"logged_out": True})
+    response.set_cookie(
+        key="access_token",
+        value="",
+        httponly=True,
+        secure=True,
+        samesite="None",
+        expires=0
+    )
     response.delete_cookie('access_token')
     response.delete_cookie('refresh_token')
+
     return response

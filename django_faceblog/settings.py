@@ -54,17 +54,15 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = "users.CustomUser"
 
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
 
-CORS_ALLOW_CREDENTIALS = True
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'auth_system.authentication.CookieJWTAuthentication',
     ]
 }
 
@@ -162,7 +160,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(hours=6),
     'BLACKLIST_AFTER_ROTATION': True,
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    "AUTH_COOKIE": "access_token",  # Name of the access token cookie
 }
 
 # CELERY SETTINGS
