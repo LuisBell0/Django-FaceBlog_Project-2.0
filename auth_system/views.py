@@ -1,8 +1,12 @@
+from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import datetime, UTC
+from django_faceblog import settings
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -20,7 +24,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 value=refresh_token,
                 httponly=True,
                 secure=True,
-                samesite='None'
+                samesite='None',
+                expires=datetime.now(UTC) + settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"],
             )
             response.data.pop('access', None)
             response.data.pop('refresh', None)
@@ -28,15 +33,18 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class CustomTokenRefreshView(TokenRefreshView):
-    serializer_class = TokenRefreshSerializer
 
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == 200:
-            access_token = response.data.get('access')
-            set_access_cookie(response, access_token)
-            response.data.pop('access', None)
-            print("Token Refreshed")
+        refresh_token = request.COOKIES.get('refresh_token')
+        if not refresh_token:
+            return Response("Error getting the token", status=status.HTTP_400_BAD_REQUEST)
+        try:
+            refresh = RefreshToken(refresh_token)
+            access_token = str(refresh.access_token)
+            response = Response({"message": "Access Token Refreshed"}, status=status.HTTP_200_OK)
+            set_access_cookie(response=response, access_token=access_token)
+        except InvalidToken:
+            return Response({"Error": "Invalid Token"}, status=status.HTTP_400_BAD_REQUEST)
         return response
 
 
@@ -47,7 +55,7 @@ def set_access_cookie(response, access_token):
         httponly=True,
         secure=True,
         samesite='None',
-        path='/',
+        expires=datetime.now(UTC) + settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
     )
 
 
@@ -59,15 +67,13 @@ def logout_view(request):
         token.blacklist()
 
     response = Response({"logged_out": True})
+    # Delete access token
     response.set_cookie(
         key="access_token",
         value="",
         httponly=True,
         secure=True,
         samesite="None",
-        expires=0
+        expires=0,
     )
-    response.delete_cookie('access_token')
-    response.delete_cookie('refresh_token')
-
     return response

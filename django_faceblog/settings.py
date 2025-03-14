@@ -159,6 +159,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # JWT SETTINGS
 SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(hours=6),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'BLACKLIST_AFTER_ROTATION': True,
     "AUTH_COOKIE": "access_token",  # Name of the access token cookie
 }
